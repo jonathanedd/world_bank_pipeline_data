@@ -1,14 +1,20 @@
 {
-  "name": "server",
+  "name": "macro-server",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
     "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "snowflake-sdk": "^1.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "Macroeconomic data server for Snowflake integration"
 }

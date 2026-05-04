@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 // 2. Middlewares (Deben ir antes de las rutas)
 app.use(
   cors({
-    origin: "https://tu-proyecto.vercel.app",
+    origin: "https://macrotrackerweb.vercel.app", // Asegúrate de que NO tenga una / al final
   }),
 );
 app.use(express.json());

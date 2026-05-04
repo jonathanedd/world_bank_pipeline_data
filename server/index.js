@@ -3,23 +3,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 import snowflake from "snowflake-sdk";
 
-// Load environment variables
+// 1. Configuración Inicial
 dotenv.config();
-
 const app = express();
-
-// En tu server/index.js
 const port = process.env.PORT || 3000;
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on port ${port}`);
-});
-
-// Middlewares
+// 2. Middlewares (Deben ir antes de las rutas)
 app.use(cors());
 app.use(express.json());
 
-// Snowflake connection configuration
+// 3. Configuración de Snowflake
 const connection = snowflake.createConnection({
   account: process.env.SNOWFLAKE_ACCOUNT,
   username: process.env.SNOWFLAKE_USERNAME,
@@ -29,12 +22,11 @@ const connection = snowflake.createConnection({
   schema: process.env.SNOWFLAKE_SCHEMA,
 });
 
-// Connect to Snowflake
 connection.connect((err, conn) => {
   if (err) {
-    console.error("Unable to connect to Snowflake: " + err.message);
+    console.error("❌ Unable to connect to Snowflake: " + err.message);
   } else {
-    console.log("Successfully connected to Snowflake. ID:", conn.getId());
+    console.log("✅ Successfully connected to Snowflake. ID:", conn.getId());
   }
 });
 
@@ -44,10 +36,9 @@ connection.connect((err, conn) => {
  * ------------------------------------------------------------------------------------------------
  */
 
-// 1. GENERIC TOP 10 ENDPOINT (Now supports any indicator)
+// 1. GENERIC TOP 10 ENDPOINT
 app.get("/api/top/:year/:indicatorCode", (req, res) => {
   const { year, indicatorCode } = req.params;
-
   const sqlQuery = `
         SELECT 
             c.COUNTRY_NAME AS COUNTRY, 
@@ -77,7 +68,6 @@ app.get("/api/top/:year/:indicatorCode", (req, res) => {
 });
 
 // 2. MULTI-COUNTRY TREND ENDPOINT
-// index.js - Updated Trend Endpoint
 app.get("/api/trend/:isoCodes/:indicatorCode", (req, res) => {
   const codes = req.params.isoCodes.toUpperCase().split(",");
   const indicatorCode = req.params.indicatorCode.toUpperCase();
@@ -88,7 +78,6 @@ app.get("/api/trend/:isoCodes/:indicatorCode", (req, res) => {
             c.ISO_CODE, 
             f.YEAR, 
             f.VALUE,
-            -- Snowflake Analytic Function: 3-Year Moving Average
             AVG(f.VALUE) OVER (
                 PARTITION BY c.ISO_CODE 
                 ORDER BY f.YEAR 
@@ -106,14 +95,13 @@ app.get("/api/trend/:isoCodes/:indicatorCode", (req, res) => {
     sqlText: sqlQuery,
     binds: [...codes, indicatorCode],
     complete: (err, stmt, rows) => {
-      if (err)
-        return res.status(500).json({ success: false, error: err.message });
+      if (err) return res.status(500).json({ success: false, error: err.message });
       res.json({ success: true, data: rows });
     },
   });
 });
 
-// 3. MACROECONOMIC SNAPSHOT ENDPOINT (All indicators for one country/year)
+// 3. MACROECONOMIC SNAPSHOT ENDPOINT
 app.get("/api/snapshot/:isoCode/:year", (req, res) => {
   const isoCode = req.params.isoCode.toUpperCase();
   const year = req.params.year;
@@ -138,9 +126,8 @@ app.get("/api/snapshot/:isoCode/:year", (req, res) => {
     sqlText: sqlQuery,
     binds: [isoCode, year],
     complete: (err, stmt, rows) => {
-      if (err)
-        return res.status(500).json({ success: false, error: err.message });
-      res.json({ success: true, data: rows }); // Importante: enviamos 'data'
+      if (err) return res.status(500).json({ success: false, error: err.message });
+      res.json({ success: true, data: rows });
     },
   });
 });
@@ -152,12 +139,7 @@ app.get("/api/years", (req, res) => {
   connection.execute({
     sqlText: sqlQuery,
     complete: (err, stmt, rows) => {
-      if (err) {
-        console.error("Error in Years Query:", err.message);
-        return res
-          .status(500)
-          .json({ success: false, error: "Error fetching years" });
-      }
+      if (err) return res.status(500).json({ success: false, error: "Error fetching years" });
       const years = rows.map((row) => row.YEAR);
       res.json({ success: true, data: years });
     },
@@ -171,22 +153,15 @@ app.get("/api/countries", (req, res) => {
   connection.execute({
     sqlText: sqlQuery,
     complete: (err, stmt, rows) => {
-      if (err) {
-        console.error("Error in Countries Query:", err.message);
-        return res
-          .status(500)
-          .json({ success: false, error: "Error fetching countries" });
-      }
+      if (err) return res.status(500).json({ success: false, error: "Error fetching countries" });
       res.json({ success: true, data: rows });
     },
   });
 });
 
 // 6. GLOBAL DATA FOR MAP
-// Endpoint para los datos del mapa global
 app.get("/api/map/:year/:indicatorCode", (req, res) => {
   const { year, indicatorCode } = req.params;
-
   const sqlQuery = `
     SELECT 
         c.ISO_CODE, 
@@ -201,14 +176,21 @@ app.get("/api/map/:year/:indicatorCode", (req, res) => {
     sqlText: sqlQuery,
     binds: [year, indicatorCode.toUpperCase()],
     complete: (err, stmt, rows) => {
-      if (err)
-        return res.status(500).json({ success: false, error: err.message });
+      if (err) return res.status(500).json({ success: false, error: err.message });
       res.json({ success: true, data: rows });
     },
   });
 });
 
-// Start Server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// 4. ARRANQUE ÚNICO DEL SERVIDOR
+// Solo una vez, al final de todo el archivo
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 Server is running on port ${port}`);
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${port} is busy.`);
+  } else {
+    console.error('❌ Server error:', err);
+  }
 });
+

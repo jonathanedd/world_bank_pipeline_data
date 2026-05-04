@@ -9,7 +9,11 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // 2. Middlewares (Deben ir antes de las rutas)
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://tu-proyecto.vercel.app",
+  }),
+);
 app.use(express.json());
 
 // 3. Configuración de Snowflake
@@ -95,7 +99,8 @@ app.get("/api/trend/:isoCodes/:indicatorCode", (req, res) => {
     sqlText: sqlQuery,
     binds: [...codes, indicatorCode],
     complete: (err, stmt, rows) => {
-      if (err) return res.status(500).json({ success: false, error: err.message });
+      if (err)
+        return res.status(500).json({ success: false, error: err.message });
       res.json({ success: true, data: rows });
     },
   });
@@ -126,7 +131,8 @@ app.get("/api/snapshot/:isoCode/:year", (req, res) => {
     sqlText: sqlQuery,
     binds: [isoCode, year],
     complete: (err, stmt, rows) => {
-      if (err) return res.status(500).json({ success: false, error: err.message });
+      if (err)
+        return res.status(500).json({ success: false, error: err.message });
       res.json({ success: true, data: rows });
     },
   });
@@ -139,7 +145,10 @@ app.get("/api/years", (req, res) => {
   connection.execute({
     sqlText: sqlQuery,
     complete: (err, stmt, rows) => {
-      if (err) return res.status(500).json({ success: false, error: "Error fetching years" });
+      if (err)
+        return res
+          .status(500)
+          .json({ success: false, error: "Error fetching years" });
       const years = rows.map((row) => row.YEAR);
       res.json({ success: true, data: years });
     },
@@ -153,7 +162,10 @@ app.get("/api/countries", (req, res) => {
   connection.execute({
     sqlText: sqlQuery,
     complete: (err, stmt, rows) => {
-      if (err) return res.status(500).json({ success: false, error: "Error fetching countries" });
+      if (err)
+        return res
+          .status(500)
+          .json({ success: false, error: "Error fetching countries" });
       res.json({ success: true, data: rows });
     },
   });
@@ -176,7 +188,8 @@ app.get("/api/map/:year/:indicatorCode", (req, res) => {
     sqlText: sqlQuery,
     binds: [year, indicatorCode.toUpperCase()],
     complete: (err, stmt, rows) => {
-      if (err) return res.status(500).json({ success: false, error: err.message });
+      if (err)
+        return res.status(500).json({ success: false, error: err.message });
       res.json({ success: true, data: rows });
     },
   });
@@ -184,13 +197,14 @@ app.get("/api/map/:year/:indicatorCode", (req, res) => {
 
 // 4. ARRANQUE ÚNICO DEL SERVIDOR
 // Solo una vez, al final de todo el archivo
-app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 Server is running on port ${port}`);
-}).on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${port} is busy.`);
-  } else {
-    console.error('❌ Server error:', err);
-  }
-});
-
+app
+  .listen(port, "0.0.0.0", () => {
+    console.log(`🚀 Server is running on port ${port}`);
+  })
+  .on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`❌ Port ${port} is busy.`);
+    } else {
+      console.error("❌ Server error:", err);
+    }
+  });

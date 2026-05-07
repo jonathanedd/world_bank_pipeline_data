@@ -37,7 +37,7 @@ function App() {
   const [primaryCountry, setPrimaryCountry] = useState("COL");
   const [secondaryCountry, setSecondaryCountry] = useState("USA");
   const [selectedMetric, setSelectedMetric] = useState(INDICATORS[0]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   //Estado para el mapa
   const [mapData, setMapData] = useState([]);
@@ -106,6 +106,25 @@ function App() {
         ?.MOVING_AVG,
     }));
   };
+
+
+  // --- NUEVO CÓDIGO: PANTALLA DE CARGA ---
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-darkBg flex flex-col items-center justify-center font-sans text-textPearl p-4">
+        <Loader2 className="animate-spin text-accentGold mb-6" size={64} />
+        <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+          <Globe className="text-accentGold" size={28} /> Global Macro Tracker
+        </h2>
+        <p className="text-gray-400 text-center max-w-md text-lg">
+          Despertando el servidor base de datos...
+        </p>
+        <p className="text-gray-500 text-center max-w-md text-sm mt-2">
+          La primera carga puede tomar hasta 30 segundos mientras los servicios en la nube se inician.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-darkBg p-4 md:p-8 font-sans text-textPearl">

@@ -19,26 +19,26 @@ app.use(
 app.use(express.json());
 
 
-import { fileURLToPath } from 'url';
-
-// 1. Obtenemos de forma absoluta la carpeta actual donde vive ESTE archivo index.js
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// 2. Definimos las rutas exactas relativas al ARCHIVO, no a la terminal
-const localKeyPath = path.resolve(__dirname, 'snowflake_key.p8'); // Al lado de index.js (Local)
-const renderKeyPath = path.resolve(__dirname, '..', 'snowflake_key.p8'); // Una carpeta arriba (Render)
-
-let privateKeyString;
-
-// 3. Evaluamos cuál ruta tiene el archivo
-if (fs.existsSync(localKeyPath)) {
-  privateKeyString = fs.readFileSync(localKeyPath, 'utf8');
-} else if (fs.existsSync(renderKeyPath)) {
-  privateKeyString = fs.readFileSync(renderKeyPath, 'utf8');
-} else {
-  throw new Error(`❌ No se encontró la llave. Rutas analizadas:\n1. Local: ${localKeyPath}\n2. Render: ${renderKeyPath}`);
+if (!process.env.SNOWFLAKE_PRIVATE_KEY) {
+  throw new Error("❌ Error: La variable de entorno SNOWFLAKE_PRIVATE_KEY no está configurada.");
 }
+
+// 1. Decodificamos la variable Base64 del .env
+const rawPem = Buffer.from(process.env.SNOWFLAKE_PRIVATE_KEY, 'base64').toString('utf8');
+
+// 2. LIMPIEZA ABSOLUTA: Extraemos solo el bloque de texto puro, quitando '\r' y espacios
+const cleanBody = rawPem
+  .replace('-----BEGIN PRIVATE KEY-----', '')
+  .replace('-----END PRIVATE KEY-----', '')
+  .replace(/\r/g, '') // Eliminamos los molestos retornos de carro de Windows (\r)
+  .trim();
+
+// 3. RECONSTRUCCIÓN EXACTA: Creamos el formato PEM perfecto que el SDK de Snowflake ama
+const privateKeyString = [
+  '-----BEGIN PRIVATE KEY-----',
+  cleanBody,
+  '-----END PRIVATE KEY-----'
+].join('\n'); // Unimos todo estrictamente con saltos de línea estándar (\n)
 
 
 // 3. Configuración de Snowflake

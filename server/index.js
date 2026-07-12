@@ -19,11 +19,23 @@ app.use(
 app.use(express.json());
 
 
-// Construimos la ruta absoluta hacia el archivo de tu llave privada
-const privateKeyPath = path.resolve(process.cwd(), 'snowflake_key.p8');
 
-// Leemos la llave directamente desde el archivo físico
-const privateKeyString = fs.readFileSync(privateKeyPath, 'utf8');
+
+// 1. Definimos las dos rutas posibles: interna (local) y externa (Render)
+const localKeyPath = path.resolve(process.cwd(), 'snowflake_key.p8');
+const renderKeyPath = path.resolve(process.cwd(), '..', 'snowflake_key.p8');
+
+let privateKeyString;
+
+// 2. Intentamos leer la ruta local primero, si falla, usamos la de Render
+if (fs.existsSync(localKeyPath)) {
+  privateKeyString = fs.readFileSync(localKeyPath, 'utf8');
+} else if (fs.existsSync(renderKeyPath)) {
+  privateKeyString = fs.readFileSync(renderKeyPath, 'utf8');
+} else {
+  // Si no está en ningún lado, arrojamos un error claro para depurar
+  throw new Error(`❌ No se encontró el archivo snowflake_key.p8 en ninguna de las rutas esperadas:\n1. ${localKeyPath}\n2. ${renderKeyPath}`);
+}
 
 // 3. Configuración de Snowflake
 const connection = snowflake.createConnection({
@@ -35,8 +47,6 @@ const connection = snowflake.createConnection({
   schema: process.env.SNOWFLAKE_SCHEMA,
 
   authenticator: 'SNOWFLAKE_JWT',
-  
-  // Pasamos la llave pura leída del sistema de archivos
   privateKey: privateKeyString
 });
 

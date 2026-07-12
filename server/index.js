@@ -19,24 +19,26 @@ app.use(
 app.use(express.json());
 
 
-
-// 1. Definimos las 3 rutas posibles de búsqueda
+// 1. Mapeamos todas las ubicaciones reales donde Render guarda los "Secret Files"
 const localKeyPath = path.resolve(process.cwd(), 'snowflake_key.p8');
 const srcKeyPath = path.resolve(process.cwd(), '..', 'snowflake_key.p8');
-const renderAbsoluteKeyPath = '/opt/render/project/snowflake_key.p8'; // Ruta raíz de Render
+const renderSecretsPath = '/var/run/secrets/snowflake_key.p8'; // Opciones de secretos de Render
+const renderHomePath = '/home/render/snowflake_key.p8';
 
 let privateKeyString;
 
-// 2. Evaluamos cuál de las 3 rutas contiene el archivo físico
+// 2. Evaluamos cuál de las rutas sí tiene la llave inyectada por Render
 if (fs.existsSync(localKeyPath)) {
   privateKeyString = fs.readFileSync(localKeyPath, 'utf8');
 } else if (fs.existsSync(srcKeyPath)) {
   privateKeyString = fs.readFileSync(srcKeyPath, 'utf8');
-} else if (fs.existsSync(renderAbsoluteKeyPath)) {
-  privateKeyString = fs.readFileSync(renderAbsoluteKeyPath, 'utf8');
+} else if (fs.existsSync(renderSecretsPath)) {
+  privateKeyString = fs.readFileSync(renderSecretsPath, 'utf8');
+} else if (fs.existsSync(renderHomePath)) {
+  privateKeyString = fs.readFileSync(renderHomePath, 'utf8');
 } else {
-  // Si no está en ninguna, arrojamos la alerta con las 3 opciones para depurar
-  throw new Error(`❌ No se encontró el archivo snowflake_key.p8 en ninguna ruta:\n1. ${localKeyPath}\n2. ${srcKeyPath}\n3. ${renderAbsoluteKeyPath}`);
+  // Si falla, te mostrará exactamente dónde buscó en el contenedor de Render
+  throw new Error(`❌ No se encontró el archivo en ninguna ruta de producción:\n1. ${localKeyPath}\n2. ${srcKeyPath}\n3. ${renderSecretsPath}\n4. ${renderHomePath}`);
 }
 
 

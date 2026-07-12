@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import snowflake from "snowflake-sdk";
+import fs from 'fs';
+import path from 'path';
 
 // 1. Configuración Inicial
 dotenv.config();
@@ -17,6 +19,11 @@ app.use(
 app.use(express.json());
 
 
+// Construimos la ruta absoluta hacia el archivo de tu llave privada
+const privateKeyPath = path.resolve(process.cwd(), 'snowflake_key.p8');
+
+// Leemos la llave directamente desde el archivo físico
+const privateKeyString = fs.readFileSync(privateKeyPath, 'utf8');
 
 // 3. Configuración de Snowflake
 const connection = snowflake.createConnection({
@@ -27,7 +34,10 @@ const connection = snowflake.createConnection({
   database: process.env.SNOWFLAKE_DATABASE,
   schema: process.env.SNOWFLAKE_SCHEMA,
 
+  authenticator: 'SNOWFLAKE_JWT',
   
+  // Pasamos la llave pura leída del sistema de archivos
+  privateKey: privateKeyString
 });
 
 connection.connect((err, conn) => {

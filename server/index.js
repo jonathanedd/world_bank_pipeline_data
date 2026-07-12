@@ -19,26 +19,25 @@ app.use(
 app.use(express.json());
 
 
-// 1. Mapeamos todas las ubicaciones reales donde Render guarda los "Secret Files"
-const localKeyPath = path.resolve(process.cwd(), 'snowflake_key.p8');
-const srcKeyPath = path.resolve(process.cwd(), '..', 'snowflake_key.p8');
-const renderSecretsPath = '/var/run/secrets/snowflake_key.p8'; // Opciones de secretos de Render
-const renderHomePath = '/home/render/snowflake_key.p8';
+import { fileURLToPath } from 'url';
+
+// 1. Obtenemos de forma absoluta la carpeta actual donde vive ESTE archivo index.js
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 2. Definimos las rutas exactas relativas al ARCHIVO, no a la terminal
+const localKeyPath = path.resolve(__dirname, 'snowflake_key.p8'); // Al lado de index.js (Local)
+const renderKeyPath = path.resolve(__dirname, '..', 'snowflake_key.p8'); // Una carpeta arriba (Render)
 
 let privateKeyString;
 
-// 2. Evaluamos cuál de las rutas sí tiene la llave inyectada por Render
+// 3. Evaluamos cuál ruta tiene el archivo
 if (fs.existsSync(localKeyPath)) {
   privateKeyString = fs.readFileSync(localKeyPath, 'utf8');
-} else if (fs.existsSync(srcKeyPath)) {
-  privateKeyString = fs.readFileSync(srcKeyPath, 'utf8');
-} else if (fs.existsSync(renderSecretsPath)) {
-  privateKeyString = fs.readFileSync(renderSecretsPath, 'utf8');
-} else if (fs.existsSync(renderHomePath)) {
-  privateKeyString = fs.readFileSync(renderHomePath, 'utf8');
+} else if (fs.existsSync(renderKeyPath)) {
+  privateKeyString = fs.readFileSync(renderKeyPath, 'utf8');
 } else {
-  // Si falla, te mostrará exactamente dónde buscó en el contenedor de Render
-  throw new Error(`❌ No se encontró el archivo en ninguna ruta de producción:\n1. ${localKeyPath}\n2. ${srcKeyPath}\n3. ${renderSecretsPath}\n4. ${renderHomePath}`);
+  throw new Error(`❌ No se encontró la llave. Rutas analizadas:\n1. Local: ${localKeyPath}\n2. Render: ${renderKeyPath}`);
 }
 
 

@@ -2730,3 +2730,25 @@
 {"level":"INFO","message":"[12:41:33.993 AM]: Easy Logging is disabled as no config has been found"}
 {"level":"INFO","message":"[12:41:34.000 AM]: Connection[id: 095ef8de-fc3e-4561-9589-d83b9d22d4e5] - authentication successful using: SNOWFLAKE_JWT"}
 {"level":"INFO","message":"[12:41:34.391 AM]: Connection[id: 095ef8de-fc3e-4561-9589-d83b9d22d4e5] - connection established successfully after 428.3 milliseconds"}
+{"level":"INFO","message":"[12:47:40.638 AM]: Creating new connection object"}
+{"level":"INFO","message":"[12:47:40.692 AM]: Creating Connection[id: 309c58cb-8dc7-4670-8651-ed6f6eab9669] with host: QCQMHWR-UUC00658.snowflakecomputing.com, account: QCQMHWR-UUC00658, accessUrl: https://QCQMHWR-UUC00658.snowflakecomputing.com, user: JONAEDD08, role: undefined, database: WORLD_BANK_DB, schema: MACROECONOMICS, warehouse: COMPUTE_WH, proxy was not configured, password is provided, region: undefined, authenticator: SNOWFLAKE_JWT, ocsp mode: FAIL_OPEN, os: win32, os version: 10.0.26200"}
+{"level":"INFO","message":"[12:47:40.692 AM]: Connection[id: 309c58cb-8dc7-4670-8651-ed6f6eab9669] additional details: passcode in password is provided, passcode is not provided, private key is provided, application: undefined, client name: snowflake-sdk, client version: 2.4.0, retry timeout: 300, private key path: undefined, private key pass is not provided, client store temporary credential: false, browser response timeout: 120000"}
+{"level":"INFO","message":"[12:47:40.693 AM]: Connection[id: 309c58cb-8dc7-4670-8651-ed6f6eab9669] - connection object created successfully."}
+{"level":"INFO","message":"[12:47:40.694 AM]: Connection[id: 309c58cb-8dc7-4670-8651-ed6f6eab9669] - async connecting. Associated Snowflake domain: GLOBAL"}
+{"level":"INFO","message":"[12:47:40.695 AM]: Trying to initialize Easy Logging"}
+{"level":"INFO","message":"[12:47:40.746 AM]: No client config detected."}
+{"level":"INFO","message":"[12:47:40.746 AM]: No config file path found. Client config will not be used."}
+{"level":"INFO","message":"[12:47:40.746 AM]: Easy Logging is disabled as no config has been found"}
+{"level":"INFO","message":"[12:47:40.770 AM]: Connection[id: 309c58cb-8dc7-4670-8651-ed6f6eab9669] - authentication successful using: SNOWFLAKE_JWT"}
+{"level":"INFO","message":"[12:47:41.548 AM]: Connection[id: 309c58cb-8dc7-4670-8651-ed6f6eab9669] - connection established successfully after 854.63 milliseconds"}
+{"level":"INFO","message":"[12:47:46.795 AM]: Creating new connection object"}
+{"level":"INFO","message":"[12:47:46.819 AM]: Creating Connection[id: 06b697e0-bd0e-4bde-8fc8-c4c99313a279] with host: QCQMHWR-UUC00658.snowflakecomputing.com, account: QCQMHWR-UUC00658, accessUrl: https://QCQMHWR-UUC00658.snowflakecomputing.com, user: JONAEDD08, role: undefined, database: WORLD_BANK_DB, schema: MACROECONOMICS, warehouse: COMPUTE_WH, proxy was not configured, password is provided, region: undefined, authenticator: SNOWFLAKE_JWT, ocsp mode: FAIL_OPEN, os: win32, os version: 10.0.26200"}
+{"level":"INFO","message":"[12:47:46.821 AM]: Connection[id: 06b697e0-bd0e-4bde-8fc8-c4c99313a279] additional details: passcode in password is provided, passcode is not provided, private key is provided, application: undefined, client name: snowflake-sdk, client version: 2.4.0, retry timeout: 300, private key path: undefined, private key pass is not provided, client store temporary credential: false, browser response timeout: 120000"}
+{"level":"INFO","message":"[12:47:46.821 AM]: Connection[id: 06b697e0-bd0e-4bde-8fc8-c4c99313a279] - connection object created successfully."}
+{"level":"INFO","message":"[12:47:46.823 AM]: Connection[id: 06b697e0-bd0e-4bde-8fc8-c4c99313a279] - async connecting. Associated Snowflake domain: GLOBAL"}
+{"level":"INFO","message":"[12:47:46.824 AM]: Trying to initialize Easy Logging"}
+{"level":"INFO","message":"[12:47:46.856 AM]: No client config detected."}
+{"level":"INFO","message":"[12:47:46.856 AM]: No config file path found. Client config will not be used."}
+{"level":"INFO","message":"[12:47:46.857 AM]: Easy Logging is disabled as no config has been found"}
+{"level":"INFO","message":"[12:47:46.863 AM]: Connection[id: 06b697e0-bd0e-4bde-8fc8-c4c99313a279] - authentication successful using: SNOWFLAKE_JWT"}
+{"level":"INFO","message":"[12:47:47.285 AM]: Connection[id: 06b697e0-bd0e-4bde-8fc8-c4c99313a279] - connection established successfully after 462.02 milliseconds"}

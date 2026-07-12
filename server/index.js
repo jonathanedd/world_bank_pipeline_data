@@ -16,6 +16,8 @@ app.use(
 );
 app.use(express.json());
 
+
+
 // 3. Configuración de Snowflake
 const connection = snowflake.createConnection({
   account: process.env.SNOWFLAKE_ACCOUNT,
@@ -24,6 +26,8 @@ const connection = snowflake.createConnection({
   warehouse: process.env.SNOWFLAKE_WAREHOUSE,
   database: process.env.SNOWFLAKE_DATABASE,
   schema: process.env.SNOWFLAKE_SCHEMA,
+
+  
 });
 
 connection.connect((err, conn) => {
